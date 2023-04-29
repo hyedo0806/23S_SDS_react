@@ -14,8 +14,8 @@ function App() {
           <h2> hello </h2>
           
           <Routes>
-            <Route path="/" element={<Home />}/>
-            <Route path="/edit" element={<Edit />}/>
+            <Route path="/" element={<Home/>}/>
+            <Route path="/edit" element={<Edit/>}/>
             <Route path="/room/:id" element={<Room/>}/>
           </Routes>
   

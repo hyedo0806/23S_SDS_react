@@ -1,36 +1,42 @@
-import React, {useContext} from "react";
-import { useParams, useSearchParams, useLocation } from "react-router-dom";
-import { SocketContext } from "../SocketContext";
+import React, {useContext, useState, useEffect, useRef} from "react";
 
+import { SocketContext } from "../SocketContext";
+import {Link, useSearchParams, useLocation} from 'react-router-dom';
 import { Chat, ChatContext} from "../components/Chat";
+import { Video, VideoContext} from "../components/Video";
+
 
 
 const Room = ({socket}) => {
     const location = useLocation();
 
+    const [msgList, setmsgList] = useState([]);
+
     const username = location.state.username;
     const room = location.state.roomID;
 
-    console.log("room.js username ", username);
-    console.log("room.js roomID ", room);
+    const dataID = useRef(0);
 
-    const { name, callAccepted, myVideo, userVideo, callEnded, stream, call, joinRoom } = useContext(SocketContext);
+    const { name, callAccepted, myVideo, userVideo, callEnded, stream, msg, call, joinRoom} = useContext(SocketContext);
+    
+    useEffect(() => {
+    
+        const newMsg = {author : msg.author, message : msg.message, id : dataID.current};
+        dataID.current += 1;
+        setmsgList([...msgList, newMsg]);
+
+    },[msg]);
 
     return (
         <div>
             <h1> room </h1>
-            <p> 이곳은 룸 </p>
-            <Chat socket={socket} username={username} room={room}/>
-            {stream && (
-                <video playsInline muted ref={myVideo} autoPlay />
-            )}
-          
-            {callAccepted && !callEnded && (
-                <video playsInline muted ref={userVideo} autoPlay />
-            )}
-
-            
-            
+            <Link to={`/`}>
+                <button >
+                    ㄷ
+                </button>
+            </Link>
+            <Chat socket={socket} username={username} room={room} msgList={msgList}/>
+            <Video socket={socket} username={username} room={room}/>
         </div>
     );
 };

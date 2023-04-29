@@ -14,70 +14,68 @@ const ContextProvider = ({ children }) => {
     const [name, setName] = useState('');
     const [call, setCall] = useState({});
     const [me, setMe] = useState('');
+    const [msg, setMsg] = useState({ 
+      author : '',
+      message : ''
+    })
+
+    // const msg = {
+    //   author:"1", 
+    //   message:"2"
+    // };
   
     const myVideo = useRef();
     const userVideo = useRef();
     const connectionRef = useRef();
 
-    //const [searchParams, setSearchParams] = useSearchParams();
-    //    const username = searchParams.get("user");
-    //    const room = searchParams.get("id");
 
-    socket.on("welcome", (nickname)=>{
-        console.log("new joined ", nickname);
-    });
     const send_message = (username, room, currMsg) => {
       if (currMsg !== "") {
+          setMsg({
+            author : username,
+            message : currMsg
+          })
           const msgData = {
               room: room, 
               author: username,
               message: currMsg,
               time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getHours(),
           };
-  
-        socket.emit("send_message", msgData);
-        console.log("socketcontext.js sendmsg roomID", msgData.room);
-        console.log("socketcontext.js sendmsg username", msgData.author);
-        console.log("socketcontext.js sendmsg msg", msgData.message);
+
+          socket.emit("send_message", msgData);
+          
       }
     };
 
     const joinRoom = (username, roomID) =>{
-      console.log("socketcontext.js joinroom roomID", roomID);
-      console.log("socketcontext.js joinroom username", username);
+      
       if (username !== "" && roomID !== ""){
+        setMsg({
+          author : username,
+          message : "입장을 환영합니다"
+        })
         socket.emit("join_room", username, roomID);
       } 
+      
     }
 
     useEffect(() => {
       socket.on("receive_message", (data) => {
-          console.log("client.js : ", data);
+        setMsg({
+          author : data.author,
+          message : data.message
+        })
+          
       })
-    }, [socket]);
-  
-    useEffect(() => {
-      navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-        .then((currentStream) => {
-          setStream(currentStream);
-  
-          myVideo.current.srcObject = currentStream;
-        });
-  
-      socket.on('me', (id) => {
-        setMe(id)
-        console.log("socket communication!");
-      });
-  
-      socket.on('callUser', ({ from, name: callerName, signal }) => {
-        setCall({ isReceivingCall: true, from, name: callerName, signal });
-      });
-    }, []);
+      
+      
+    },[socket]);
+    
 
     
 
     const new_message = (msg, room) => {
-      console.log("socketcontext.js new_message : ", msg);
+      
       socket.emit("new_message", msg);
     }
   
@@ -138,6 +136,7 @@ const ContextProvider = ({ children }) => {
         setName,
         callEnded,
         me,
+        msg,
         callUser,
         leaveCall,
         answerCall,
