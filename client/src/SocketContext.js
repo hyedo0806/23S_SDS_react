@@ -1,7 +1,6 @@
 import React, {createContext, useState, useRef, useEffect} from "react";
-import { useParams, useSearchParams } from "react-router-dom";
 import {io} from 'socket.io-client';
-import Peer from 'simple-peer';
+
 
 const SocketContext = createContext();
 
@@ -14,19 +13,32 @@ const ContextProvider = ({ children }) => {
     const [name, setName] = useState('');
     const [call, setCall] = useState({});
     const [me, setMe] = useState('');
+    const [muteBtn, setMutebtn] = useState(false);
+    const [cameraBtn, setCamerabtn] = useState(true);
+
+
     const [msg, setMsg] = useState({ 
       author : '',
       message : ''
     })
 
-    // const msg = {
-    //   author:"1", 
-    //   message:"2"
-    // };
-  
-    const myVideo = useRef();
     const userVideo = useRef();
-    const connectionRef = useRef();
+    
+    let roomName;
+    let myPeerConnection;
+
+    function handleCameraClick (myVideo, cameraBtn) {
+      
+      setCamerabtn(!cameraBtn);
+      myVideo.current.srcObject.getVideoTracks()[0].enabled = cameraBtn;
+    }
+  
+    function handleMuteClick (myVideo, muteBtn) {
+      setMutebtn(!muteBtn);
+      myVideo.current.srcObject.getAudioTracks()[0].enabled = !muteBtn;
+    }
+
+    
 
 
     const send_message = (username, room, currMsg) => {
@@ -47,8 +59,15 @@ const ContextProvider = ({ children }) => {
       }
     };
 
+    socket.on("welcome", async () => {
+      const offer = await myPeerConnection.createOffer();
+      myPeerConnection.setLocalDescription(offer);
+      console.log("sent the offer");
+      // socket.emit("offer", offer, );
+    });
+
     const joinRoom = (username, roomID) =>{
-      
+      roomName = roomID;
       if (username !== "" && roomID !== ""){
         setMsg({
           author : username,
@@ -59,91 +78,38 @@ const ContextProvider = ({ children }) => {
       
     }
 
-    useEffect(() => {
-      socket.on("receive_message", (data) => {
-        setMsg({
-          author : data.author,
-          message : data.message
-        })
-          
+    
+    
+    socket.on("receive_message", (data) => {
+      setMsg({
+        author : data.author,
+        message : data.message
       })
-      
-      
-    },[socket]);
+        
+    })
     
-
     
-
-    const new_message = (msg, room) => {
-      
-      socket.emit("new_message", msg);
-    }
-  
-    const answerCall = () => {
-      setCallAccepted(true);
-  
-      const peer = new Peer({ initiator: false, trickle: false, stream });
-  
-      peer.on('signal', (data) => {
-        socket.emit('answerCall', { signal: data, to: call.from });
-      });
-  
-      peer.on('stream', (currentStream) => {
-        userVideo.current.srcObject = currentStream;
-      });
-  
-      peer.signal(call.signal);
-  
-      connectionRef.current = peer;
-    };
-  
-    const callUser = (id) => {
-      const peer = new Peer({ initiator: true, trickle: false, stream });
-  
-      peer.on('signal', (data) => {
-        socket.emit('callUser', { userToCall: id, signalData: data, from: me, name });
-      });
-  
-      peer.on('stream', (currentStream) => {
-        userVideo.current.srcObject = currentStream;
-      });
-  
-      socket.on('callAccepted', (signal) => {
-        setCallAccepted(true);
-  
-        peer.signal(signal);
-      });
-  
-      connectionRef.current = peer;
-    };
-  
-    const leaveCall = () => {
-      setCallEnded(true);
-  
-      connectionRef.current.destroy();
-  
-      window.location.reload();
-    };
-  
     return (
       <SocketContext.Provider value={{
+        muteBtn,
+        cameraBtn,
         call,
         callAccepted,
-        myVideo,
         userVideo,
         stream,
         name,
-        setName,
         callEnded,
         me,
         msg,
-        callUser,
-        leaveCall,
-        answerCall,
+        setName,
         joinRoom,
-        send_message
+        send_message,
+        handleCameraClick,
+        handleMuteClick
+        
       }}
       >
+        
         {children}
       </SocketContext.Provider>
     );

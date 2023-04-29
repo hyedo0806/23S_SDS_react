@@ -1,51 +1,60 @@
 import React, {createContext, useEffect, useState, useContext, useRef} from 'react'
 import { SocketContext } from "../SocketContext";
 
-const VideoContext = createContext();
 
 const Video = ({socket, username, room}) => {
-  const { name, callAccepted,  userVideo, callEnded, call, joinRoom, send_message, answerCall } = useContext(SocketContext);
-  const [stream, setStream] = useState();
+  const { handleMuteClick, handleCameraClick, muteBtn, cameraBtn, name, callAccepted,userVideo, callEnded, call, joinRoom, send_message, answerCall } = useContext(SocketContext);
+  
   const [msgList, setmsgList] = useState([]);
+  const [devices, setDevices] = useState([]);
+  const [selectedDeviceId, setSelectedDeviceId] = useState(null);
   const [currMsg, setcurrMsg] = useState("");
   
-  const myVideo = useRef();
+  const myVideo = useRef(null);
+
   useEffect(() => {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-      .then((currentStream) => {
-        setStream(currentStream);
-        myVideo.current.srcObject = currentStream;
-      });
-
-    // socket.on('me', (id) => {
-    //   setMe(id)
-    //   console.log("socket communication!");
-    // });
-
-    // socket.on('callUser', ({ from, name: callerName, signal }) => {
-    //   setCall({ isReceivingCall: true, from, name: callerName, signal });
-    // });
+    async function getMedia(deviceId) {
+      const initialConstrains = {
+        audio: true,
+        video: { facingMode: "user" },
+      };
+      const cameraConstraints = {
+        audio: true,
+        video: { deviceId: { exact: deviceId } },
+      };
+      try {
+      
+        const myStream = await navigator.mediaDevices.getUserMedia(
+          deviceId ? cameraConstraints : initialConstrains
+        );
+        myVideo.current.srcObject = myStream;
+        console.log("getmedia ", myStream)
+        
+      } catch (e) {
+        console.log(e);
+      }
+      
+    }
+  getMedia();
   }, []);
-
+  
 
   return (
-    <VideoContext.Provider value={{currMsg}}> 
+   
         <div>
-            <div className="chat-header">
-                <p> Live Chat </p>
-            </div>
-
-            <video playsInline muted ref={myVideo} autoPlay />
             
-            <video playsInline muted ref={userVideo} autoPlay />
+            <p> Live Chat </p>
+            
+            <video ref={myVideo} autoPlay />
+            <button onClick={() => handleMuteClick(myVideo, muteBtn)}> {muteBtn? "Unmute" : "Mute"} </button>
+            <button onClick={() => handleCameraClick(myVideo, cameraBtn)}> {cameraBtn ? "Turn Video Off" : "Turn Video On"} </button>
             
         </div>
 
-    </VideoContext.Provider>
-        
+
   );
 }
 
-export { Video, VideoContext };
+export { Video};
 
 
