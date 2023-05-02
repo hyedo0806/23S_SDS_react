@@ -18,36 +18,41 @@ app.get('/', (req, res) => {
 });
 
 io.on("connection", (socket) => {
-	console.log(`user connected : ${socket.id}`);
 
 	socket["nickname"] = "Anon";
-	//socket.emit("me", socket.id);
 
 	socket.on("join_room", (username, roomID) => {
         socket.nickname = username
         socket.join(roomID);
         socket.to(roomID).emit("welcome", socket.nickname);
-		console.log(`user with id : ${socket.id}, username : ${username}, joined room : ${roomID}`)
+		console.log("welcome from server.js ", roomID)
     });
 
+	socket.on("offer", (offer, roomName) => {
+		socket.to(roomName).emit("offer", offer);
+	
+	});
+
+	socket.on("answer", (answer, roomName) => {
+		socket.to(roomName).emit("answer", answer);
+	});
+	
+	socket.on("ice", (ice, roomName) => {
+		console.log('server.js ice: ', ice)
+		socket.to(roomName).emit("ice", ice);
+	});
+
 	socket.on("send_message", (data) => {
-		console.log("server.js : ", data)
-		console.log("server.js : ", data.room)
+
 		socket.to(data.room).emit("receive_message", data);
 	});
 
 	socket.on("disconnect", () => {
-		console.log("User disconnected ", socket.id);
+
 		socket.broadcast.emit("callEnded")
 	});
 
-	socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-		io.to(userToCall).emit("callUser", { signal: signalData, from, name });
-	});
 
-	socket.on("answerCall", (data) => {ç
-		io.to(data.to).emit("callAccepted", data.signal)
-	});
 
 	socket.on("nickname", nickname => socket["nickname"] = nickname);
 });

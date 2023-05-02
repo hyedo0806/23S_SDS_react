@@ -19,7 +19,7 @@ const Chat = ({socket, username, room, msgList}) => {
 
  
   return (
-    <ChatContext.Provider value={{currMsg}}> 
+   
         <div>
             <div className="chat-header">
                 <p> Live Chat </p>
@@ -40,9 +40,9 @@ const Chat = ({socket, username, room, msgList}) => {
             
         </div>
 
-    </ChatContext.Provider>
+    
         
   );
 }
 
-export { Chat, ChatContext };
+export { Chat };

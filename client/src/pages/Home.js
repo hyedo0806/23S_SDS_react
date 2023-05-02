@@ -4,7 +4,7 @@ import React, {createContext, useState, useRef, useEffect, useContext} from "rea
 
 function Home() {
     
-    const { me, callAccepted, name, setName, callEnded, leaveCall, callUser, joinRoom } = useContext(SocketContext);
+    const { initCall, joinRoom } = useContext(SocketContext);
     const [username, setUsername] = useState("");
     const [room, setRoom] = useState("");
 
@@ -21,7 +21,7 @@ function Home() {
                     roomID: room,
                     username: username
             }}>
-                <button onClick={() => joinRoom(username, room)}>
+                <button onClick={async() => joinRoom(username, room)}>
                     Enter
                 </button>
             </Link>

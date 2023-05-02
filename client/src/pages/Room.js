@@ -3,7 +3,7 @@ import React, {useContext, useState, useEffect, useRef} from "react";
 import { SocketContext } from "../SocketContext";
 import {Link, useSearchParams, useLocation} from 'react-router-dom';
 import { Chat, ChatContext} from "../components/Chat";
-import { Video, VideoContext} from "../components/Video";
+import { Video} from "../components/Video";
 
 
 
@@ -32,11 +32,14 @@ const Room = ({socket}) => {
             <h1> room </h1>
             <Link to={`/`}>
                 <button >
-                    ㄷ
+                    exit
                 </button>
             </Link>
+
+            <Video  username={username} room={room}/>
+            
             <Chat socket={socket} username={username} room={room} msgList={msgList}/>
-            <Video socket={socket} username={username} room={room}/>
+            
         </div>
     );
 };
