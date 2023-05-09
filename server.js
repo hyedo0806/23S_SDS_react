@@ -25,7 +25,7 @@ io.on("connection", (socket) => {
         socket.nickname = username
         socket.join(roomID);
         socket.to(roomID).emit("welcome", socket.nickname);
-		console.log("welcome from server.js ", roomID)
+
     });
 
 	socket.on("offer", (offer, roomName) => {

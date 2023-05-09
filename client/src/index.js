@@ -1,18 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import App from './App';
+
 import { ContextProvider, SocketProvider } from './SocketContext';
-import reportWebVitals from './reportWebVitals';
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import Room from './pages/Room';
+import Home from './pages/Home';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <ContextProvider>
-    <App />
-  </ContextProvider>
+  <div style={{width:'100vw', height:'100vh'}}>
+    <ContextProvider>
+      <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home/>}/>
+            <Route path="/room/:id" element={<Room/>}/>
+          </Routes>
+      </BrowserRouter>
+    </ContextProvider>
+  </div>
+  
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

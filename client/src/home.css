@@ -1,0 +1,75 @@
+.home {
+    height:100%;
+    width:100%;
+    
+}
+
+
+.home-title {
+   
+    text-align: center;
+    margin : 0 auto;
+    padding-top: 20px;
+    padding-bottom: 30px;
+ 
+    /* border-style: inset;
+    border-width: 5px;
+    border-color: #a09ad3; */
+
+    font-variant: small-caps;
+    font-weight: bold;
+    font-size: 80px;
+    color: #47455a;
+    font-family: "Chalkboard";
+}
+
+.home-enter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top : 200px;
+    padding-bottom : 390px;
+    margin-top : 10px;
+    
+}
+
+
+.home-enter-input {
+    display: block;
+
+    font-size: 15px;
+    color: #070606;
+    
+    width: 300px;
+    height: 40px;
+    margin-top : 10px;
+    padding-left: 15px;
+    border-radius: 5px;
+    border: 2px solid rgb(237, 236, 237);
+
+    
+}
+
+.home-enter-input:focus {
+
+    outline: 2px solid rgb(139, 111, 174);
+    color: black;
+}
+
+
+
+.home-enter-button {
+    display: block;
+    font-size: 20px;
+    
+    width: 320px;
+    height: 40px;
+    
+    margin-top : 10px;
+    
+    border-radius: 5px;
+    border: 2px solid rgb(237, 236, 237);
+    font-family: "Chalkboard";
+
+}

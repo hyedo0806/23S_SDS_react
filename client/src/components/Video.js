@@ -1,3 +1,4 @@
+import '../video.css';
 import React, {createContext, useEffect, useState, useContext, useRef} from 'react'
 import { SocketContext } from "../SocketContext";
 
@@ -30,14 +31,18 @@ const Video = React.memo(({username, roomID}) => {
 
   return (
    
-        <div>
-            
-            <p> Live Chat </p>
-            
-            <video ref={myVideo} autoPlay />
-            <button onClick={() => handleMuteClick( muteBtn)}> {muteBtn? "Unmute" : "Mute"} </button>
-            <button onClick={() => handleCameraClick( cameraBtn)}> {cameraBtn ? "Turn Video Off" : "Turn Video On"} </button>
-            <video ref={userVideo} autoPlay />
+        <div className='video'>
+            <div className='userpart'>
+              <video className='uservideo' ref={userVideo} autoPlay />  
+            </div>
+            <div className='mypart'>
+              <video className='myvideo' ref={myVideo} autoPlay />  
+            </div>
+            <div className='button'>
+              <button className='mute' onClick={() => handleMuteClick( muteBtn)}> {muteBtn? "Unmute" : "Mute"} </button>
+              <button className='camera' onClick={() => handleCameraClick( cameraBtn)}> {cameraBtn ? "Turn Video Off" : "Turn Video On"} </button>
+            </div>
+
         </div>
         
 

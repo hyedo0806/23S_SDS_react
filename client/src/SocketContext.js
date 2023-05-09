@@ -37,7 +37,7 @@ const ContextProvider = ({ children }) => {
       if (username !== "" && roomID !== ""){
         setMsg({
           author : username,
-          message : "입장을 환영합니다"
+          message : ""
         })
 
         await initCall();
@@ -144,24 +144,8 @@ const ContextProvider = ({ children }) => {
     
 
     
-    
-    
-    
     return (
-      <SocketContext.Provider value={{
-
-    
-        myVideo,
-        userVideo,
-       
-        msg,
-        initCall,
-        joinRoom,
-        send_message, 
-        getMedia,
-      }}
-      >
-        
+      <SocketContext.Provider value={{myVideo, userVideo, msg, initCall, joinRoom, send_message, getMedia}}>
         {children}
       </SocketContext.Provider>
     );
